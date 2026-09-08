@@ -48,11 +48,11 @@ game.init();
 Straight from a CDN — no npm, no build step:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@magmacrunch/adenosine-puzzle@0.3/puzzle-base.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@magmacrunch/adenosine-puzzle@0.3/puzzle-grid.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@magmacrunch/adenosine-puzzle@0.3/puzzle-modals.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@magmacrunch/adenosine-puzzle@0.3/puzzle-responsive.css">
-<script src="https://cdn.jsdelivr.net/npm/@magmacrunch/adenosine-puzzle@0.3/dist/index.global.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@magmacrunch/adenosine-puzzle@0.4/puzzle-base.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@magmacrunch/adenosine-puzzle@0.4/puzzle-grid.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@magmacrunch/adenosine-puzzle@0.4/puzzle-modals.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@magmacrunch/adenosine-puzzle@0.4/puzzle-responsive.css">
+<script src="https://cdn.jsdelivr.net/npm/@magmacrunch/adenosine-puzzle@0.4/dist/index.global.js"></script>
 ```
 
 The IIFE build exposes `window.AdPuzzle`. The version is pinned to a minor here on purpose:
