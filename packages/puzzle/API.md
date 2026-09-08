@@ -163,15 +163,16 @@ renderer.renderGrid(game.getGrid());
 
 ## createInput
 
-### `createInput(callbacks, boardElement?)`
+### `createInput(callbacks, boardElement?, options?)`
 
 Arrow keys plus touch swipe. **Callbacks come first; the game is not passed in** —
 the input layer only asks whether play is live and reports a direction.
 
 | Param | Type | Description |
 |-------|------|-------------|
-| `callbacks` | `PuzzleInputCallbacks` | `{ onMove(direction), isActive() }`, both required |
+| `callbacks` | `PuzzleInputCallbacks` | `{ onMove(direction), isActive() }` required; `onDrag` / `onDragEnd` optional |
 | `boardElement` | `HTMLElement` | Optional element to bind touch events to |
+| `options` | `PuzzleInputOptions` | Optional `{ swipeThreshold, commitOnThreshold }` |
 
 Swipes shorter than 30px are ignored. Returns `PuzzleInput` — call `.destroy()`
 to remove every listener.
@@ -182,6 +183,36 @@ const input = AdPuzzle.createInput({
   isActive: () => game.isActive(),
 }, document.getElementById('board'));
 ```
+
+#### Following the finger
+
+By default a touch resolves only when it lifts, and nothing is reported while
+it is down. Two opt-in additions change that:
+
+- **`onDrag`** is called on every `touchmove`, with the displacement so
+  far and the direction it would commit to. A game can use it to offset its
+  tiles so they track the finger. `onDragEnd` follows when the finger lifts.
+- **`commitOnThreshold`** fires `onMove` the moment the swipe threshold is
+  crossed, rather than waiting for the lift.
+
+```js
+const input = AdPuzzle.createInput({
+  onMove: (dir) => game.handleMove(dir),
+  isActive: () => game.isActive(),
+  onDrag: ({ dx, dy, direction }) => board.lean(dx, dy, direction),
+  onDragEnd: () => board.settle(),
+}, boardEl, { commitOnThreshold: true });
+```
+
+**Both are off unless asked for, and that is load-bearing.** The `touchmove`
+listener is not registered at all unless one of them is supplied, so a page
+that passes neither gets exactly the listeners it always had. Every puzzle in
+the arcade loads this bundle; committing mid-drag is a different game to play,
+and it is not this module's call to make on their behalf.
+
+The listener is non-passive when registered, and calls `preventDefault` only
+once a drag has passed the threshold — so a tap still behaves like a tap, and
+the page is not pinned by every stray touch.
 
 ## PuzzleGrid
 
@@ -324,5 +355,27 @@ interface TileInfo {
 interface PuzzleInputCallbacks {
   onMove: (direction: Direction) => void;
   isActive: () => boolean;
+  onDrag?: (state: PuzzleDragState) => void;
+  onDragEnd?: () => void;
+}
+```
+
+### `PuzzleInputOptions`
+
+```ts
+interface PuzzleInputOptions {
+  swipeThreshold?: number;      // default 30
+  commitOnThreshold?: boolean;  // default false
+}
+```
+
+### `PuzzleDragState`
+
+```ts
+interface PuzzleDragState {
+  dx: number;                    // movement from the touch origin, CSS pixels
+  dy: number;
+  direction: Direction | null;   // null until past the threshold
+  committed: boolean;            // whether onMove has already fired
 }
 ```

@@ -9,7 +9,23 @@ any other package.
 
 ## Unreleased
 
-_Nothing yet._
+### Added — `createInput` can follow the finger
+
+- `onDrag` reports displacement and the direction a touch would commit to, on
+  every `touchmove`, so a game can offset its tiles and let them track the
+  finger. `onDragEnd` follows when the finger lifts.
+- `commitOnThreshold` fires `onMove` the moment the swipe threshold is crossed
+  instead of waiting for the lift.
+- `swipeThreshold` makes the 30px constant configurable.
+
+Both drag features are off unless asked for, and the `touchmove` listener is
+not registered at all unless one of them is supplied — so a page passing
+neither gets exactly the listeners it always had. Every puzzle in the arcade
+loads this bundle and committing mid-drag is a different game to play, so it
+is opt-in per game rather than a change made on their behalf.
+
+The listener is non-passive when registered and calls `preventDefault` only
+once a drag passes the threshold, so a tap still behaves like a tap.
 
 ## 0.3.0 — 2026-08-29
 
